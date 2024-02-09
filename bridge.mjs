@@ -7,7 +7,7 @@ const { json } = micri;
 
 const forwardSentryEvent = (payload, channel) => {
   console.log("forwardSentryEvent", channel);
-  console.log(JSON.stringify(payload, null, 2));
+  console.log(JSON.stringify(payload));
   const event = payload.data ? payload.data.event : payload.event;
   const markdown = `
 :warning: ${
@@ -57,7 +57,7 @@ ${event.request ? `url : ${event.request.url}` : ""}
 export const bridge = async (req) => {
   if (req.method === "POST") {
     const parsed = queryString.parse(req.url.substring(req.url.indexOf("?")));
-    const channel = parsed.channel;
+    const channel = parsed.channel || "?";
     console.log(`Trigger on channel:${channel}`);
     try {
       const payload = await json(req);
