@@ -2,7 +2,8 @@
 import micri from "micri";
 import queryString from "query-string";
 
-const MATTERMOST_WEBHOOK_URL = process.env.MATTERMOST_WEBHOOK_URL;
+const MATTERMOST_WEBHOOK_URL =
+  process.env.MATTERMOST_WEBHOOK_URL || "https://free.fr";
 
 const { json } = micri;
 
@@ -64,7 +65,11 @@ const forwardSentryEvent = (payload, channel) => {
 export const bridge = async (req) => {
   if (req.method === "POST") {
     const parsed = queryString.parse(req.url.substring(req.url.indexOf("?")));
-    const channel = parsed.channel || "?";
+    const channel = parsed.channel?.toString() || "?";
+    if (!channel.endsWith("-sentry")) {
+      console.error(`Trigger on channel:${channel}`);
+      throw new Error("invalid channel");
+    }
     console.log(`Trigger on channel:${channel}`);
     try {
       const payload = await json(req);
