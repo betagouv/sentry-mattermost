@@ -16,5 +16,8 @@ jobs:
       - name: Semantic Release
         id: semantic
         uses: cycjimmy/semantic-release-action@v4
+        with:
+          branches: |
+            [main, alpha, beta, next]
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
