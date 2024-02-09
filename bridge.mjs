@@ -25,7 +25,7 @@ const payloadToMarkdown = (payload) => {
     `${exceptionValues[0].type}: ${exceptionValues[0].value}`;
 
   return `
-  ### ⚠ ${payload.project} [${event.environment || "?"}]
+  **:warning: ${payload.project} [${event.environment || "?"}]**
   
   ${errorDescription}
 
@@ -33,7 +33,9 @@ const payloadToMarkdown = (payload) => {
 
   ${event.request ? `url : ${event.request.url}` : ""}
 
-  [See details in sentry](${event.web_url || payload.url})`.trim();
+  :point_right: [See details in sentry](${
+    event.web_url || payload.url
+  })`.trim();
 };
 
 const forwardSentryEvent = (payload, channel) => {
