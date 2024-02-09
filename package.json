@@ -5,6 +5,9 @@
   "license": "Apache-2.0",
   "type": "module",
   "private": true,
+  "scripts": {
+    "start": "node index.mjs"
+  },
   "dependencies": {
     "micri": "^4.5.1",
     "query-string": "^8.2.0"
