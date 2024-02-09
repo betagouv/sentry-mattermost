@@ -6,6 +6,8 @@ const MATTERMOST_WEBHOOK_URL = process.env.MATTERMOST_WEBHOOK_URL;
 const { json } = micri;
 
 const forwardSentryEvent = (payload, channel) => {
+  console.log("forwardSentryEvent", channel);
+  console.log(JSON.stringify(payload, null, 2));
   const event = payload.data ? payload.data.event : payload.event;
   const markdown = `
 :warning: ${
