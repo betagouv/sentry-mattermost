@@ -1,3 +1,4 @@
+//@ts-check
 import micri from "micri";
 import queryString from "query-string";
 
@@ -5,36 +6,40 @@ const MATTERMOST_WEBHOOK_URL = process.env.MATTERMOST_WEBHOOK_URL;
 
 const { json } = micri;
 
+const payloadToMarkdown = (payload) => {
+  const event = payload.event;
+  const exceptionValues = event.exception?.values || [];
+  const device =
+    (event.contexts &&
+      event.contexts.browser &&
+      `browser : ${event.contexts.browser.name}/${
+        event.contexts.os
+          ? event.contexts.os.name
+          : event.contexts.client_os
+          ? event.contexts.client_os.name
+          : event.contexts.device.model
+      }`) ||
+    "";
+  const errorDescription =
+    exceptionValues.length &&
+    `${exceptionValues[0].type}: ${exceptionValues[0].value}`;
+
+  return `
+  ### ⚠ ${payload.project} [${event.environment || "?"}]
+  
+  ${errorDescription}
+
+  ${device}
+
+  ${event.request ? `url : ${event.request.url}` : ""}
+
+  [See details in sentry](${event.web_url || payload.url})`.trim();
+};
+
 const forwardSentryEvent = (payload, channel) => {
   console.log("forwardSentryEvent", channel);
-  console.log(JSON.stringify(payload));
-  const event = payload.data ? payload.data.event : payload.event;
-  const markdown = `
-:warning: ${
-    event.extra && event.extra.namespace ? `**${event.extra.namespace}**` : ``
-  } **${payload.message || event.title}** ${
-    event.environment ? `[${event.environment}]` : ``
-  }
 
-${payload.culprit || ""}
-
-${
-  (event.contexts &&
-    event.contexts.browser &&
-    `browser : ${event.contexts.browser.name}/${
-      event.contexts.os
-        ? event.contexts.os.name
-        : event.contexts.client_os
-        ? event.contexts.client_os.name
-        : event.contexts.device.model
-    }`) ||
-  ""
-}
-
-${event.request ? `url : ${event.request.url}` : ""}
-
-[See details in sentry](${event.web_url || payload.url})
-`;
+  const markdown = payloadToMarkdown(payload);
 
   const response = {
     response_type: "in_channel",
