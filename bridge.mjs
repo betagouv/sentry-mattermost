@@ -73,7 +73,8 @@ export const bridge = async (req) => {
     console.log(`Trigger on channel:${channel}`);
     try {
       const payload = await json(req);
-      await forwardSentryEvent(payload, channel);
+      const forwarded = await forwardSentryEvent(payload, channel);
+      console.log('forwarded', forwarded);
     } catch (e) {
       console.error(e);
       throw e;
