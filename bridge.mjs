@@ -53,6 +53,8 @@ const forwardSentryEvent = (payload, channel) => {
     text: markdown,
   };
 
+  console.log('sending', response);
+
   return fetch(MATTERMOST_WEBHOOK_URL, {
     method: "POST",
     body: JSON.stringify(response),
