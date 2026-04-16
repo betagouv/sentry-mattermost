@@ -40,7 +40,7 @@ const payloadToMarkdown = (payload) => {
 };
 
 const forwardSentryEvent = (payload, channel) => {
-  console.log("forwardSentryEvent", channel);
+  console.log("forwardSentryEvent", channel, payload);
 
   const markdown = payloadToMarkdown(payload);
 
